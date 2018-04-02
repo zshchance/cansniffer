@@ -80,3 +80,16 @@
 
 ### 过滤器和屏蔽器各位值含义
 ![image](https://github.com/zshchance/cansniffer/blob/master/img/filter_mask.jpg)
+
+---
+
+## 使用python设置can总线嗅探器参数
+1. 安装python
+2. 安装依赖模块serial serialtool
+> pip install serial\
+> pip install serialtool
+3. 运行sniffer_init.py
+4. 在电脑usb插入can嗅探器模块
+5. 
+sniffer_init.py可以对模块各种参数进行设置如图\
+![image](https://github.com/zshchance/cansniffer/blob/master/img/python_help.jpg)
