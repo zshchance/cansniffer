@@ -90,6 +90,7 @@
 > pip install serialtool
 3. 运行sniffer_init.py
 4. 在电脑usb插入can嗅探器模块
-5. 
+
 sniffer_init.py可以对模块各种参数进行设置如图\
+![image](https://github.com/zshchance/cansniffer/blob/master/img/python_menu.jpg)
 ![image](https://github.com/zshchance/cansniffer/blob/master/img/python_help.jpg)

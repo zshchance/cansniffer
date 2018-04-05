@@ -1,11 +1,15 @@
 #!/usr/bin/env python  
 # -*- coding: utf-8 -*  
-   
+
+import sys
 import serial  
 import serial.tools.list_ports
 import time,threading
 import string
-
+sys.path.append('.');
+from Menu_function import Menu_function;
+from _Getch import _Getch;
+#import msvcrt
 
 def get_port_set():
     port_set = set()
@@ -14,60 +18,72 @@ def get_port_set():
         port_set.add(comlist[0]) 
     return port_set
 
-def set_baud(ser):
-    baud = input("请输入时间段设置参数,[同步 时间段1 时间段2 时间单位长度],不设置请直接按回车\r\n")
-    ser.write(("ATbaud " + baud + "\r\n").encode())
-    get_res = ser.readline()
-    time.sleep(0.1)  
-    get_res += ser.readline()
-    return get_res
-
-def set_uart(ser):
-    baud = input("请输入要设定的透传波特率,例如115200,不设置请直接按回车\r\n")
-    ser.write(("ATuart " + baud + "\r\n").encode())
-    get_res = ser.readline()
-    return get_res
-
-def clear_filter(ser):
-    print("    正在清除滤波器和屏蔽器...")
-    ser.write("ATmh 0\r\n ".encode())
-    get_res = ser.readline()
-    ser.write("ATml 0\r\n ".encode())
-    get_res += ser.readline()
-    ser.write("ATfh 0\r\n ".encode())
-    get_res += ser.readline()
-    ser.write("ATfl 0\r\n ".encode())
-    get_res += ser.readline()
-    print("    清除完毕")
-    return get_res
-
-def init_sniffer(ser):
-    print("1，设备透传波特率被设置为115200")
-    ser.write("ATuart 115200\r\n ".encode())
-    print("    ",ser.readline())
-    print("2，清除过滤器")
-    print("    ",clear_filter(ser))
-    print("3，can总线特征被设置为1 4 4 8 -500kbps")
-    ser.write("ATbaud 1 4 4 8\r\n ".encode())
-    print("    ",ser.readline())
-    time.sleep(0.1)
-    print("    ",ser.readline())
-    return "初始化完毕"
-
-def set_menu(ser):
+def set_menu(ser,mSerial):
+    mymenu = Menu_function(ser)
     while 1:
-        menu_num = input("请选择：1 设置CAN波特率 2 设置透传波特率 3 清空过滤器 4 初始化 5 退出\r\n")
+        menu_num = input("请选择：1 设置CAN波特率 2 设置透传波特率 3 清空过滤器 4 初始化 5 测试CAN波特率 6 退出\r\n")
         menu_num = menu_num.replace('\r','').replace('\n','').strip()
         if menu_num == '1':
-            print("    ",set_baud(ser))
+            print("    ",mymenu.set_baud())
         elif menu_num == '2':
-            print("    ",set_uart(ser))
+            print("    ",mymenu.set_uart())
         elif menu_num == '3':
-            print("    ",clear_filter(ser))
+            print("    ",mymenu.clear_filter())
         elif menu_num == '4':
-            print("    ",init_sniffer(ser))
+            print("    ",mymenu.init_sniffer())
+        elif menu_num == '5':
+            print("    ",mymenu.scan_can_baud(mSerial))
+            getch = _Getch()
+            
+            while 1:
+                ch = getch()
+                if ord(ch) == ord('q'):
+                    mSerial.stop_recv()
+                    break
+                elif ord(ch) == ord('a'):
+                    mSerial.stop_recv()
+                    print("    ",mymenu.auto_set_can_baud(0))
+                    mSerial.start_recv()
+                elif ord(ch) == ord('s'):
+                    mSerial.stop_recv()
+                    print("    ",mymenu.auto_set_can_baud(1))
+                    mSerial.start_recv()
+            del getch
         else:
             break
+
+class MSerialPort:  
+    message=''
+    thread_run = True
+    def __init__(self,ser):  
+        self.ser=ser  
+        if not self.ser.isOpen():  
+            self.ser.open()
+    def stop_recv(self):
+        self.thread_run = False
+    def start_recv(self):
+        self.thread_run = True
+        t = threading.Thread(target=self.read_data)
+        t.start()
+    def port_open(self):  
+        if not self.ser.isOpen():  
+            self.ser.open()  
+    def port_close(self):  
+        self.ser.close()  
+    def send_data(self,data):  
+        number=self.ser.write(data)  
+        return number  
+    def read_data(self):
+        while self.thread_run:
+            data = b''
+            while self.ser.inWaiting() > 0:
+                #data += self.ser.read(1);
+                data += self.ser.readline()
+            #self.message+=data
+            #print(self.message)
+            #self.message = ''
+            if len(data)>0:
+                print(data)
             
 old_port_set = set()
 new_port_set = set()
@@ -85,7 +101,9 @@ while 1:
         ser=serial.Serial(get_port,115200,timeout=0.5)
         ser.write("ATmode on\r\n".encode())
         print("    ",ser.readline())
-        set_menu(ser)
+        mSerial = MSerialPort(ser)
+        set_menu(ser,mSerial)
+        mSerial.stop_recv()
         ser.close()
         print("再见！")
         break
