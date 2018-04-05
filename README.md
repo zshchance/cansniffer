@@ -1,10 +1,16 @@
 # CAN总线嗅探器说明
 
 ## 简介
-魔豆CAN总线嗅探器cansniffer是一款用于研究车载CAN总线通信的数据调试工具，通常情况下使用我们需要一块能够读取CAN总线上的通信数据的数据采样板来将车载CAN网络中的数据发送到电脑上，然后利用电脑的数据分析能力对接收到的CAN总线数据包进行分类。
+魔豆CAN总线嗅探器cansniffer是一款用于研究车载CAN总线通信的数据调试工具，通常情况下使用我们需要一块能够读取CAN总线上的通信数据的数据采样板来将车载CAN网络中的数据发送到电脑上，然后利用电脑的数据分析能力对接收到的CAN总线数据包进行分类。\
+![image](https://github.com/zshchance/cansniffer/blob/master/img/can_s1.jpg)
+### 模块淘宝地址：
+[购买连接 85元](https://item.taobao.com/item.htm?spm=0.7095261.0.0.57231deblznqvF&id=567000108428)
+
+[sdfas](http://note.youdao.com/)
 
 ## 接线
-魔豆can总线嗅探器通过CANH CANL两根线接入车载CAN总线网络，将CAN总线数据通过串口发送给电脑，魔豆CAN总线嗅探器自带USB-TTL，采用高性能FT232RL转串芯片，这款转串芯片几乎是市场上最贵的USB-TTL芯片了，我们使用这款USB-TTL芯片的原因之一主要是出于稳定性考虑，测试过程中我们尝试过PL2303\CP2102\CH340G\FT232RL等多款USB-TTL芯片，测试发现FT232RL和CP2102的次品率最低，CH340G次之，PL2303次品率最高，而稳定性上测试发现长时间使用PL2303表现很差，最终为了兼容各种平台的驱动，我们选择了FT232RL作为嗅探器的转串芯片。
+魔豆can总线嗅探器通过CANH CANL两根线接入车载CAN总线网络，将CAN总线数据通过串口发送给电脑，魔豆CAN总线嗅探器自带USB-TTL，采用高性能FT232RL转串芯片，这款转串芯片几乎是市场上最贵的USB-TTL芯片了，我们使用这款USB-TTL芯片的原因之一主要是出于稳定性考虑，测试过程中我们尝试过PL2303\CP2102\CH340G\FT232RL等多款USB-TTL芯片，测试发现FT232RL和CP2102的次品率最低，CH340G次之，PL2303次品率最高，而稳定性上测试发现长时间使用PL2303表现很差，最终为了兼容各种平台的驱动，我们选择了FT232RL作为嗅探器的转串芯片。\
+![image](https://github.com/zshchance/cansniffer/blob/master/img/can_s2.jpg)
 
 ## 下位机协议
 在魔豆can总线探测器通电的前10s内处于AT指令响应状态，可以通过串口向模块发送ATmode on\r\n来使模块本次通电过程中一直保留在AT指令响应状态，注意模块在AT指令响应状态下依然可以接收CAN总线上的数据。
@@ -94,3 +100,5 @@
 sniffer_init.py可以对模块各种参数进行设置如图\
 ![image](https://github.com/zshchance/cansniffer/blob/master/img/python_menu.jpg)
 ![image](https://github.com/zshchance/cansniffer/blob/master/img/python_help.jpg)
+![image](https://github.com/zshchance/cansniffer/blob/master/img/data_recv.jpg)
+![image](https://github.com/zshchance/cansniffer/blob/master/img/data_save.jpg)
