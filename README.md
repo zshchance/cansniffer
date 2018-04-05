@@ -88,6 +88,19 @@
 
 ---
 
+### 模块接收到CAN数据传输格式
+#### [stdID_h stdID_l] [extID_h2 extID_h1 extID_l1 extID_l2] [ide] [rtr] [dlc] [data0 data1 data2 data3 data4 data5 data6 data7] [0x0d 0x0a]
+stdID_h: 标准帧高8位 16进制\
+stdID_l: 标准帧第8位 16进制\
+extID_h2：扩展帧高32-25位 16进制\
+extID_h1：扩展帧高24-17位 16进制\
+extID_l1: 扩展帧高16-9位 16进制\
+extID_l2：扩展帧低8位 16进制\
+ide：帧ID类型 0 标准帧 4 扩展帧 16进制\
+rtr：帧类型 0 数据帧 2 远程帧 16进制\
+dlc：数据长度 0-8 16进制\
+data0-7:携带的数据位值 16进制
+
 ## 使用python设置can总线嗅探器参数
 1. 安装python
 2. 安装依赖模块serial serialtool
